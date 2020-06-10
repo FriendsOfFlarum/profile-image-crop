@@ -72,7 +72,7 @@ export default class ProfileImageCropModal extends Modal {
         let blob;
 
         if (canvas.toBlob) {
-            await new Promise(r => canvas.toBlob(r)).then(b => (blob = b));
+            await new Promise((r) => canvas.toBlob(r)).then((b) => (blob = b));
         } else {
             const dataURI = canvas && canvas.toDataURL(this.props.file.type);
 
