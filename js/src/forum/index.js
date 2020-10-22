@@ -9,10 +9,10 @@ app.initializers.add('fof/profile-image-crop', () => {
         if (this.loading) return;
 
         app.modal.show(
-            new ProfileImageCropModal({
+            ProfileImageCropModal, {
                 file,
                 upload: original,
-            })
+            }
         );
     });
 

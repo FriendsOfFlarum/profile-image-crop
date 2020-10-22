@@ -20,15 +20,16 @@ export default class ProfileImageCropModal extends Modal {
 
         reader.addEventListener('load', () => {
             this.image = reader.result;
-            m.lazyRedraw();
+            m.redraw();
         });
-        reader.readAsDataURL(this.props.file);
+        reader.readAsDataURL(this.attrs.file);
     }
 
     content() {
         return (
             <div className="Modal-body">
                 <div className="Image-container">
+                    {console.log('content')}
                     {!this.ready && LoadingIndicator.component({ size: 'tiny' })}
                     {this.image && <img src={this.image} config={this.loadPicker.bind(this)} />}
                 </div>
@@ -39,13 +40,13 @@ export default class ProfileImageCropModal extends Modal {
                     className: 'Button Button--primary',
                     loading: this.loading,
                     onclick: this.upload.bind(this),
-                    children: app.translator.trans('core.forum.edit_user.submit_button'),
-                })}
+                }, app.translator.trans('core.forum.edit_user.submit_button'))}
             </div>
         );
     }
 
     loadPicker($el, isInitialized) {
+        console.log('here');
         if (isInitialized) return;
 
         setTimeout(() => {
@@ -59,11 +60,12 @@ export default class ProfileImageCropModal extends Modal {
                 responsive: true,
             });
 
-            m.lazyRedraw();
+            m.redraw();
         }, 500);
     }
 
     async upload() {
+        console.log('1');
         if (!this.cropper) return;
 
         this.loading = true;
@@ -74,7 +76,7 @@ export default class ProfileImageCropModal extends Modal {
         if (canvas.toBlob) {
             await new Promise((r) => canvas.toBlob(r)).then((b) => (blob = b));
         } else {
-            const dataURI = canvas && canvas.toDataURL(this.props.file.type);
+            const dataURI = canvas && canvas.toDataURL(this.attrs.file.type);
 
             const arr = dataURI.split(',');
             const bstr = atob(arr[1]);
@@ -85,7 +87,7 @@ export default class ProfileImageCropModal extends Modal {
             blob = u8arr;
         }
 
-        const file = new File([blob], this.props.file.name, { type: this.props.file.type });
+        const file = new File([blob], this.attrs.file.name, { type: this.attrs.file.type });
 
         this.props.upload(file);
     }
