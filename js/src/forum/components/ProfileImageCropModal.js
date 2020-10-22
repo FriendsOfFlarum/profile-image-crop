@@ -29,7 +29,6 @@ export default class ProfileImageCropModal extends Modal {
         return (
             <div className="Modal-body">
                 <div className="Image-container">
-                    {console.log('content')}
                     {!this.ready && LoadingIndicator.component({ size: 'tiny' })}
                     {this.image && <img src={this.image} config={this.loadPicker.bind(this)} />}
                 </div>
@@ -46,7 +45,6 @@ export default class ProfileImageCropModal extends Modal {
     }
 
     loadPicker($el, isInitialized) {
-        console.log('here');
         if (isInitialized) return;
 
         setTimeout(() => {
@@ -65,7 +63,6 @@ export default class ProfileImageCropModal extends Modal {
     }
 
     async upload() {
-        console.log('1');
         if (!this.cropper) return;
 
         this.loading = true;
