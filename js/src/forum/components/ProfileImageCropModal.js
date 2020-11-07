@@ -13,16 +13,15 @@ export default class ProfileImageCropModal extends Modal {
         return app.translator.trans('core.forum.user.avatar_upload_button');
     }
 
-    config(isInitialized) {
-        if (isInitialized) return;
-
+    oninit(vnode) {
+        super.oninit(vnode)
         const reader = new FileReader();
 
         reader.addEventListener('load', () => {
             this.image = reader.result;
-            m.lazyRedraw();
+            m.redraw();
         });
-        reader.readAsDataURL(this.props.file);
+        reader.readAsDataURL(this.attrs.file);
     }
 
     content() {
@@ -30,7 +29,7 @@ export default class ProfileImageCropModal extends Modal {
             <div className="Modal-body">
                 <div className="Image-container">
                     {!this.ready && LoadingIndicator.component({ size: 'tiny' })}
-                    {this.image && <img src={this.image} config={this.loadPicker.bind(this)} />}
+                    {this.image && <img src={this.image} oncreate={this.loadPicker.bind(this)} />}
                 </div>
 
                 <br />
@@ -39,19 +38,16 @@ export default class ProfileImageCropModal extends Modal {
                     className: 'Button Button--primary',
                     loading: this.loading,
                     onclick: this.upload.bind(this),
-                    children: app.translator.trans('core.forum.edit_user.submit_button'),
-                })}
+                }, app.translator.trans('core.forum.edit_user.submit_button'))}
             </div>
         );
     }
 
-    loadPicker($el, isInitialized) {
-        if (isInitialized) return;
-
+    loadPicker(vnode) {
         setTimeout(() => {
             this.ready = true;
 
-            this.cropper = new Cropper($el, {
+            this.cropper = new Cropper(vnode.dom, {
                 aspectRatio: 1,
                 viewMode: 1,
                 guides: false,
@@ -59,7 +55,7 @@ export default class ProfileImageCropModal extends Modal {
                 responsive: true,
             });
 
-            m.lazyRedraw();
+            m.redraw();
         }, 500);
     }
 
@@ -74,7 +70,7 @@ export default class ProfileImageCropModal extends Modal {
         if (canvas.toBlob) {
             await new Promise((r) => canvas.toBlob(r)).then((b) => (blob = b));
         } else {
-            const dataURI = canvas && canvas.toDataURL(this.props.file.type);
+            const dataURI = canvas && canvas.toDataURL(this.attrs.file.type);
 
             const arr = dataURI.split(',');
             const bstr = atob(arr[1]);
@@ -85,8 +81,8 @@ export default class ProfileImageCropModal extends Modal {
             blob = u8arr;
         }
 
-        const file = new File([blob], this.props.file.name, { type: this.props.file.type });
+        const file = new File([blob], this.attrs.file.name, { type: this.attrs.file.type });
 
-        this.props.upload(file);
+        this.attrs.upload(file);
     }
 }
