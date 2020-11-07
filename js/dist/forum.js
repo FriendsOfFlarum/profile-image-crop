@@ -4642,10 +4642,11 @@ function (_Modal) {
     return app.translator.trans('core.forum.user.avatar_upload_button');
   };
 
-  _proto.config = function config(isInitialized) {
+  _proto.oninit = function oninit(vnode) {
     var _this = this;
 
-    if (isInitialized) return;
+    _Modal.prototype.oninit.call(this, vnode);
+
     var reader = new FileReader();
     reader.addEventListener('load', function () {
       _this.image = reader.result;
@@ -4659,11 +4660,11 @@ function (_Modal) {
       className: "Modal-body"
     }, m("div", {
       className: "Image-container"
-    }, console.log('content'), !this.ready && flarum_components_LoadingIndicator__WEBPACK_IMPORTED_MODULE_5___default.a.component({
+    }, !this.ready && flarum_components_LoadingIndicator__WEBPACK_IMPORTED_MODULE_5___default.a.component({
       size: 'tiny'
     }), this.image && m("img", {
       src: this.image,
-      config: this.loadPicker.bind(this)
+      oncreate: this.loadPicker.bind(this)
     })), m("br", null), flarum_components_Button__WEBPACK_IMPORTED_MODULE_4___default.a.component({
       className: 'Button Button--primary',
       loading: this.loading,
@@ -4671,14 +4672,12 @@ function (_Modal) {
     }, app.translator.trans('core.forum.edit_user.submit_button')));
   };
 
-  _proto.loadPicker = function loadPicker($el, isInitialized) {
+  _proto.loadPicker = function loadPicker(vnode) {
     var _this2 = this;
 
-    console.log('here');
-    if (isInitialized) return;
     setTimeout(function () {
       _this2.ready = true;
-      _this2.cropper = new cropperjs__WEBPACK_IMPORTED_MODULE_6___default.a($el, {
+      _this2.cropper = new cropperjs__WEBPACK_IMPORTED_MODULE_6___default.a(vnode.dom, {
         aspectRatio: 1,
         viewMode: 1,
         guides: false,
@@ -4700,36 +4699,34 @@ function (_Modal) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              console.log('1');
-
               if (this.cropper) {
-                _context.next = 3;
+                _context.next = 2;
                 break;
               }
 
               return _context.abrupt("return");
 
-            case 3:
+            case 2:
               this.loading = true;
               canvas = this.cropper.getCroppedCanvas();
 
               if (!canvas.toBlob) {
-                _context.next = 10;
+                _context.next = 9;
                 break;
               }
 
-              _context.next = 8;
+              _context.next = 7;
               return new Promise(function (r) {
                 return canvas.toBlob(r);
               }).then(function (b) {
                 return blob = b;
               });
 
-            case 8:
-              _context.next = 16;
+            case 7:
+              _context.next = 15;
               break;
 
-            case 10:
+            case 9:
               dataURI = canvas && canvas.toDataURL(this.attrs.file.type);
               arr = dataURI.split(',');
               bstr = atob(arr[1]);
@@ -4741,13 +4738,13 @@ function (_Modal) {
 
               blob = u8arr;
 
-            case 16:
+            case 15:
               file = new File([blob], this.attrs.file.name, {
                 type: this.attrs.file.type
               });
               this.props.upload(file);
 
-            case 18:
+            case 17:
             case "end":
               return _context.stop();
           }

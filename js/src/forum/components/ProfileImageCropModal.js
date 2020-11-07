@@ -13,9 +13,8 @@ export default class ProfileImageCropModal extends Modal {
         return app.translator.trans('core.forum.user.avatar_upload_button');
     }
 
-    config(isInitialized) {
-        if (isInitialized) return;
-
+    oninit(vnode) {
+        super.oninit(vnode)
         const reader = new FileReader();
 
         reader.addEventListener('load', () => {
@@ -30,7 +29,7 @@ export default class ProfileImageCropModal extends Modal {
             <div className="Modal-body">
                 <div className="Image-container">
                     {!this.ready && LoadingIndicator.component({ size: 'tiny' })}
-                    {this.image && <img src={this.image} config={this.loadPicker.bind(this)} />}
+                    {this.image && <img src={this.image} oncreate={this.loadPicker.bind(this)} />}
                 </div>
 
                 <br />
@@ -44,13 +43,12 @@ export default class ProfileImageCropModal extends Modal {
         );
     }
 
-    loadPicker($el, isInitialized) {
-        if (isInitialized) return;
+    loadPicker(vnode) {
 
         setTimeout(() => {
             this.ready = true;
 
-            this.cropper = new Cropper($el, {
+            this.cropper = new Cropper(vnode.dom, {
                 aspectRatio: 1,
                 viewMode: 1,
                 guides: false,
