@@ -44,7 +44,6 @@ export default class ProfileImageCropModal extends Modal {
     }
 
     loadPicker(vnode) {
-
         setTimeout(() => {
             this.ready = true;
 
@@ -84,6 +83,6 @@ export default class ProfileImageCropModal extends Modal {
 
         const file = new File([blob], this.attrs.file.name, { type: this.attrs.file.type });
 
-        this.props.upload(file);
+        this.attrs.upload(file);
     }
 }

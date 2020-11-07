@@ -4742,7 +4742,7 @@ function (_Modal) {
               file = new File([blob], this.attrs.file.name, {
                 type: this.attrs.file.type
               });
-              this.props.upload(file);
+              this.attrs.upload(file);
 
             case 17:
             case "end":
@@ -4784,16 +4784,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 app.initializers.add('fof/profile-image-crop', function () {
+  var cropModal;
   Object(flarum_extend__WEBPACK_IMPORTED_MODULE_0__["override"])(flarum_components_AvatarEditor__WEBPACK_IMPORTED_MODULE_1___default.a.prototype, 'upload', function (original, file) {
     if (!file || !window.FileReader) return original();
     if (this.loading) return;
-    app.modal.show(_components_ProfileImageCropModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    cropModal = app.modal.show(_components_ProfileImageCropModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
       file: file,
       upload: original
     });
   });
   Object(flarum_extend__WEBPACK_IMPORTED_MODULE_0__["extend"])(flarum_components_AvatarEditor__WEBPACK_IMPORTED_MODULE_1___default.a.prototype, 'success', function () {
-    if (app.modal && app.modal.component instanceof _components_ProfileImageCropModal__WEBPACK_IMPORTED_MODULE_2__["default"]) app.modal.close();
+    app.modal.close(cropModal);
   });
   Object(flarum_extend__WEBPACK_IMPORTED_MODULE_0__["extend"])(flarum_components_AvatarEditor__WEBPACK_IMPORTED_MODULE_1___default.a.prototype, 'failure', function (ignored, error) {
     if (app.modal && app.modal.component instanceof _components_ProfileImageCropModal__WEBPACK_IMPORTED_MODULE_2__["default"]) {
