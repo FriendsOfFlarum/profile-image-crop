@@ -1,5 +1,5 @@
-import { extend, override } from 'flarum/extend';
-import AvatarEditor from 'flarum/components/AvatarEditor';
+import { extend, override } from 'flarum/common/extend';
+import AvatarEditor from 'flarum/common/components/AvatarEditor';
 
 import ProfileImageCropModal from './components/ProfileImageCropModal';
 
@@ -9,12 +9,10 @@ app.initializers.add('fof/profile-image-crop', () => {
         if (!file || !window.FileReader) return original();
         if (this.loading) return;
 
-        cropModal = app.modal.show(
-            ProfileImageCropModal, {
-                file,
-                upload: original,
-            }
-        );
+        cropModal = app.modal.show(ProfileImageCropModal, {
+            file,
+            upload: original,
+        });
     });
 
     extend(AvatarEditor.prototype, 'success', () => {

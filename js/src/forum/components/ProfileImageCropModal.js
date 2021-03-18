@@ -1,6 +1,6 @@
-import Modal from 'flarum/components/Modal';
-import Button from 'flarum/components/Button';
-import LoadingIndicator from 'flarum/components/LoadingIndicator';
+import Modal from 'flarum/common/components/Modal';
+import Button from 'flarum/common/components/Button';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 
 import Cropper from 'cropperjs';
 
@@ -14,7 +14,7 @@ export default class ProfileImageCropModal extends Modal {
     }
 
     oninit(vnode) {
-        super.oninit(vnode)
+        super.oninit(vnode);
         const reader = new FileReader();
 
         reader.addEventListener('load', () => {
@@ -34,11 +34,14 @@ export default class ProfileImageCropModal extends Modal {
 
                 <br />
 
-                {Button.component({
-                    className: 'Button Button--primary',
-                    loading: this.loading,
-                    onclick: this.upload.bind(this),
-                }, app.translator.trans('core.forum.edit_user.submit_button'))}
+                {Button.component(
+                    {
+                        className: 'Button Button--primary',
+                        loading: this.loading,
+                        onclick: this.upload.bind(this),
+                    },
+                    app.translator.trans('core.forum.edit_user.submit_button')
+                )}
             </div>
         );
     }
