@@ -1,3 +1,5 @@
+import app from 'flarum/forum/app';
+
 import Modal from 'flarum/common/components/Modal';
 import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
@@ -5,6 +7,8 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Cropper from 'cropperjs';
 
 export default class ProfileImageCropModal extends Modal {
+    static isDismissible = true;
+
     className() {
         return 'FofProfileImageCropModal Modal--small';
     }
@@ -15,12 +19,14 @@ export default class ProfileImageCropModal extends Modal {
 
     oninit(vnode) {
         super.oninit(vnode);
+
         const reader = new FileReader();
 
         reader.addEventListener('load', () => {
             this.image = reader.result;
             m.redraw();
         });
+
         reader.readAsDataURL(this.attrs.file);
     }
 
@@ -28,20 +34,15 @@ export default class ProfileImageCropModal extends Modal {
         return (
             <div className="Modal-body">
                 <div className="Image-container">
-                    {!this.ready && LoadingIndicator.component({ size: 'tiny' })}
-                    {this.image && <img src={this.image} oncreate={this.loadPicker.bind(this)} />}
+                    {!this.ready && <LoadingIndicator size="tiny" />}
+                    {this.image && <img src={this.image} className={this.ready && 'ready'} oncreate={this.loadPicker.bind(this)} />}
                 </div>
 
                 <br />
 
-                {Button.component(
-                    {
-                        className: 'Button Button--primary',
-                        loading: this.loading,
-                        onclick: this.upload.bind(this),
-                    },
-                    app.translator.trans('core.forum.edit_user.submit_button')
-                )}
+                <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)}>
+                    {app.translator.trans('core.forum.edit_user.submit_button')}
+                </Button>
             </div>
         );
     }
@@ -60,6 +61,17 @@ export default class ProfileImageCropModal extends Modal {
 
             m.redraw();
         }, 500);
+    }
+
+    onbeforeupdate(vnode) {
+        if (vnode.attrs.error) {
+            this.loading = false;
+
+            delete vnode.attrs.error;
+            delete app.modal.modal.attrs.error;
+        }
+
+        super.onbeforeupdate(vnode);
     }
 
     async upload() {
