@@ -41,7 +41,7 @@ export default class ProfileImageCropModal extends Modal {
                 <br />
 
                 <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)}>
-                    {app.translator.trans('core.forum.edit_user.submit_button')}
+                    {app.translator.trans('core.lib.edit_user.submit_button')}
                 </Button>
             </div>
         );
