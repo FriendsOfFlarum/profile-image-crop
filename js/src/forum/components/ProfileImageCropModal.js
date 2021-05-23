@@ -35,7 +35,7 @@ export default class ProfileImageCropModal extends Modal {
             <div className="Modal-body">
                 <div className="Image-container">
                     {!this.ready && <LoadingIndicator size="tiny" />}
-                    {this.image && <img src={this.image} className={this.ready && 'ready'} oncreate={this.loadPicker.bind(this)} />}
+                    {this.image && <img src={this.image} ready={!!this.ready} oncreate={this.loadPicker.bind(this)} />}
                 </div>
 
                 <br />
