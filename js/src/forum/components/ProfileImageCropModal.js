@@ -7,7 +7,7 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Cropper from 'cropperjs';
 
 export default class ProfileImageCropModal extends Modal {
-    static isDismissible = true;
+    static isDismissible = false;
 
     className() {
         return 'FofProfileImageCropModal Modal--small';
@@ -40,9 +40,13 @@ export default class ProfileImageCropModal extends Modal {
 
                 <br />
 
-                <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)}>
+                <div className="Modal-buttons">
+                  <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)}>
                     {app.translator.trans('core.lib.edit_user.submit_button')}
-                </Button>
+                  </Button>
+
+                  <Button className="Button Button--icon Button--danger" icon="fas fa-times" onclick={this.hide.bind(this)} />
+                </div>
             </div>
         );
     }
