@@ -115,7 +115,8 @@ export default class ProfileImageCropModal extends Modal {
     let imageBlobReduce;
 
     try {
-      imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ 'image-blob-reduce')).default;
+      // Importing package directly uses ESM build which errors on prod webpack build.
+      imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ '../util/resize')).default;
     } catch (e) {
       console.error('[fof/profile-image-crop] An error occurred while loading image-blob-reduce.', e);
 
