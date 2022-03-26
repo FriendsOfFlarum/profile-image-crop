@@ -66,7 +66,7 @@ export default class ProfileImageCropModal extends Modal {
       this.ready = true;
 
       if (Cropper) {
-        this.cropper = new Cropper(evt.target, {
+        this.cropper = new Cropper(evt.target || evt.path[0], {
           aspectRatio: 1,
           viewMode: 1,
           guides: false,
