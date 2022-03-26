@@ -1,0 +1,18 @@
+/*!
+
+pica
+https://github.com/nodeca/pica
+
+*/
+
+/*!
+ * Cropper.js v1.5.12
+ * https://fengyuanchen.github.io/cropperjs
+ *
+ * Copyright 2015-present Chen Fengyuan
+ * Released under the MIT license
+ *
+ * Date: 2021-06-12T08:00:17.411Z
+ */
+
+/*! image-blob-reduce 4.1.0 https://github.com/nodeca/image-blob-reduce @license MIT */
