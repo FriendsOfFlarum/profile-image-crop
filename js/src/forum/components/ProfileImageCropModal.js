@@ -4,7 +4,7 @@ import Modal from 'flarum/common/components/Modal';
 import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 
-import Cropper from 'cropperjs';
+import { dataURLToBlob } from 'blob-util';
 
 export default class ProfileImageCropModal extends Modal {
   static isDismissible = false;
@@ -35,13 +35,13 @@ export default class ProfileImageCropModal extends Modal {
       <div className="Modal-body">
         <div className="Image-container">
           {!this.ready && <LoadingIndicator size="tiny" />}
-          {this.image && <img src={this.image} ready={!!this.ready} oncreate={this.loadPicker.bind(this)} />}
+          {this.image && <img src={this.image} ready={!!this.ready} onload={this.loadPicker.bind(this)} />}
         </div>
 
         <br />
 
         <div className="Modal-buttons">
-          <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)}>
+          <Button className="Button Button--primary" loading={this.loading} onclick={this.submit.bind(this)}>
             {app.translator.trans('core.lib.edit_user.submit_button')}
           </Button>
 
@@ -51,17 +51,29 @@ export default class ProfileImageCropModal extends Modal {
     );
   }
 
-  loadPicker(vnode) {
+  async loadPicker(evt) {
+    __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
+
+    let Cropper;
+
+    try {
+      Cropper = (await import(/* webpackChunkName: 'modules' */ 'cropperjs')).default;
+    } catch (e) {
+      console.error('[fof/profile-image-crop] An error occurred while loading cropperjs.', e);
+    }
+
     setTimeout(() => {
       this.ready = true;
 
-      this.cropper = new Cropper(vnode.dom, {
-        aspectRatio: 1,
-        viewMode: 1,
-        guides: false,
-        background: false,
-        responsive: true,
-      });
+      if (Cropper) {
+        this.cropper = new Cropper(evt.target, {
+          aspectRatio: 1,
+          viewMode: 1,
+          guides: false,
+          background: false,
+          responsive: true,
+        });
+      }
 
       m.redraw();
     }, 500);
@@ -78,27 +90,47 @@ export default class ProfileImageCropModal extends Modal {
     super.onbeforeupdate(vnode);
   }
 
+  async submit() {
+    try {
+      await this.upload();
+    } catch (e) {
+      this.loading = false;
+
+      throw e;
+    }
+  }
+
   async upload() {
-    if (!this.cropper) return;
+    if (this.loading) return;
 
     this.loading = true;
 
-    const canvas = this.cropper.getCroppedCanvas();
-    let blob;
-
-    if (canvas.toBlob) {
-      await new Promise((r) => canvas.toBlob(r)).then((b) => (blob = b));
-    } else {
-      const dataURI = canvas && canvas.toDataURL(this.attrs.file.type);
-
-      const arr = dataURI.split(',');
-      const bstr = atob(arr[1]);
-      let n = bstr.length,
-        u8arr = new Uint8Array(n);
-      while (n--) u8arr[n] = bstr.charCodeAt(n);
-
-      blob = u8arr;
+    if (!this.cropper) {
+      return await this.submitDataURI(this.image);
     }
+
+    const canvas = this.cropper.getCroppedCanvas();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+
+    let imageBlobReduce;
+
+    try {
+      imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ 'image-blob-reduce')).default;
+    } catch (e) {
+      console.error('[fof/profile-image-crop] An error occurred while loading image-blob-reduce.', e);
+
+      return await this.submitDataURI(canvas.toDataURL());
+    }
+
+    const resizedCanvas = await imageBlobReduce().toCanvas(blob, {
+      max: 500,
+    });
+
+    await this.submitDataURI(resizedCanvas.toDataURL());
+  }
+
+  async submitDataURI(dataURI) {
+    const blob = await dataURLToBlob(dataURI);
 
     const file = new File([blob], this.attrs.file.name, { type: this.attrs.file.type });
 
