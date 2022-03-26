@@ -123,7 +123,7 @@ export default class ProfileImageCropModal extends Modal {
     }
 
     const resizedCanvas = await imageBlobReduce().toCanvas(blob, {
-      max: 500,
+      max: 100,
     });
 
     await this.submitDataURI(resizedCanvas.toDataURL());
