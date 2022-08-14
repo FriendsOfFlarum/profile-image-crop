@@ -11,7 +11,7 @@ jobs:
 
         steps:
             - uses: actions/checkout@master
-            - uses: flarum/action-build@dw/commit-all-option
+            - uses: flarum/action-build@3
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   commit_all_dirty: true
