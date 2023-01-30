@@ -54,6 +54,10 @@ export default class ProfileImageCropModal extends Modal {
   async loadPicker(evt) {
     __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
 
+    // Need to store event target before async and/or timeouts,
+    // otherwise becomes null on Chrome
+    const target = evt.target || evt.path[0];
+
     let Cropper;
 
     try {
@@ -66,7 +70,7 @@ export default class ProfileImageCropModal extends Modal {
       this.ready = true;
 
       if (Cropper) {
-        this.cropper = new Cropper(evt.target || evt.path[0], {
+        this.cropper = new Cropper(target, {
           aspectRatio: 1,
           viewMode: 1,
           guides: false,
