@@ -35,10 +35,19 @@ export default class ProfileImageCropModal extends Modal {
       <div className="Modal-body">
         <div className="Image-container">
           {!this.ready && <LoadingIndicator size="tiny" />}
-          {this.image && <img src={this.image} ready={!!this.ready} onload={this.loadPicker.bind(this)} />}
+          {this.image && <img src={this.image} data-ready={!!this.ready} onload={this.loadPicker.bind(this)} />}
         </div>
 
         <br />
+
+        {this.ready && this.cropper && (
+          <p className="helpText">
+            {app.translator.trans('fof-profile-image-crop.forum.modal.help_text', {
+              disableResize: this.noResize ? <s /> : <a onclick={this.disableResize.bind(this)} />,
+              disableCrop: !this.cropper ? <s /> : <a onclick={this.disableCrop.bind(this)} />,
+            })}
+          </p>
+        )}
 
         <div className="Modal-buttons">
           <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)} disabled={!this.ready}>
@@ -110,19 +119,30 @@ export default class ProfileImageCropModal extends Modal {
     super.onbeforeupdate(vnode);
   }
 
+  disableResize() {
+    this.noResize = true;
+    m.redraw();
+  }
+
+  disableCrop() {
+    this.cropper.destroy();
+    this.cropper = null;
+    m.redraw();
+  }
+
   async upload() {
     if (this.loading) return;
 
     this.loading = true;
 
     if (!this.cropper) {
-      return this.submitDataURI(this.image);
+      return this.submitBlob(await dataURLToBlob(this.image));
     }
 
     const canvas = this.cropper.getCroppedCanvas();
 
     if (this.noResize) {
-      return this.submitDataURI(canvas.toDataURL());
+      return this.submitBlob(await this.canvasToBlob(canvas));
     }
 
     let imageBlobReduce;
@@ -166,15 +186,16 @@ export default class ProfileImageCropModal extends Modal {
       return;
     }
 
-    return this.submitDataURI(resizedCanvas.toDataURL());
+    return this.submitBlob(await this.canvasToBlob(resizedCanvas));
   }
 
-  async submitDataURI(dataURI) {
-    console.log('url to blob');
-    const blob = await dataURLToBlob(dataURI);
+  async canvasToBlob(canvas) {
+    return new Promise((resolve) => canvas.toBlob(resolve));
+  }
 
+  async submitBlob(blob) {
     const file = new File([blob], this.attrs.file.name, { type: this.attrs.file.type });
 
-    this.attrs.upload(file);
+    return this.attrs.upload(file);
   }
 }
