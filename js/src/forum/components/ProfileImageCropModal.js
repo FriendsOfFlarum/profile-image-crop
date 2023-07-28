@@ -41,8 +41,8 @@ export default class ProfileImageCropModal extends Modal {
         <br />
 
         <div className="Modal-buttons">
-          <Button className="Button Button--primary" loading={this.loading} onclick={this.submit.bind(this)}>
-            {app.translator.trans('core.lib.edit_user.submit_button')}
+          <Button className="Button Button--primary" loading={this.loading} onclick={this.upload.bind(this)} disabled={!this.ready}>
+            {app.translator.trans(`fof-profile-image-crop.forum.modal.${this.cropper ? 'submit_crop' : 'submit'}_button`)}
           </Button>
 
           <Button className="Button Button--icon Button--danger" icon="fas fa-times" onclick={this.hide.bind(this)} />
@@ -64,6 +64,11 @@ export default class ProfileImageCropModal extends Modal {
       Cropper = (await import(/* webpackChunkName: 'modules' */ 'cropperjs')).default;
     } catch (e) {
       console.error('[fof/profile-image-crop] An error occurred while loading cropperjs.', e);
+
+      this.alertAttrs = {
+        type: 'error',
+        content: app.translator.trans('fof-profile-image-crop.forum.modal.error.failed_to_load_cropper'),
+      };
     }
 
     setTimeout(() => {
@@ -84,8 +89,19 @@ export default class ProfileImageCropModal extends Modal {
   }
 
   onbeforeupdate(vnode) {
-    if (vnode.attrs.error) {
+    const err = vnode.attrs.error;
+
+    if (err) {
       this.loading = false;
+
+      if (!err.alert) {
+        this.alertAttrs = {
+          type: 'error',
+          content: err.toLocaleString?.() || err,
+        };
+      } else {
+        delete this.alertAttrs;
+      }
 
       delete vnode.attrs.error;
       delete app.modal.modal.attrs.error;
@@ -94,47 +110,67 @@ export default class ProfileImageCropModal extends Modal {
     super.onbeforeupdate(vnode);
   }
 
-  async submit() {
-    try {
-      await this.upload();
-    } catch (e) {
-      this.loading = false;
-
-      throw e;
-    }
-  }
-
   async upload() {
     if (this.loading) return;
 
     this.loading = true;
 
     if (!this.cropper) {
-      return await this.submitDataURI(this.image);
+      return this.submitDataURI(this.image);
     }
 
     const canvas = this.cropper.getCroppedCanvas();
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+
+    if (this.noResize) {
+      return this.submitDataURI(canvas.toDataURL());
+    }
 
     let imageBlobReduce;
 
     try {
-      // Importing package directly uses ESM build which errors on prod webpack build.
-      imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ '../util/resize')).default;
+      imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ 'image-blob-reduce')).default;
     } catch (e) {
       console.error('[fof/profile-image-crop] An error occurred while loading image-blob-reduce.', e);
 
-      return await this.submitDataURI(canvas.toDataURL());
+      this.noResize = true;
+
+      return this.upload();
     }
 
-    const resizedCanvas = await imageBlobReduce().toCanvas(blob, {
-      max: 100,
-    });
+    let resizedCanvas = canvas;
 
-    await this.submitDataURI(resizedCanvas.toDataURL());
+    try {
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+
+      resizedCanvas = await imageBlobReduce().toCanvas(blob, {
+        max: 100,
+      });
+    } catch (e) {
+      console.error('[fof/profile-image-crop] An error occurred while resizing the image', e);
+
+      this.alertAttrs = {
+        type: 'error',
+        content:
+          e.code === 'ERR_GET_IMAGE_DATA'
+            ? app.translator.trans('fof-profile-image-crop.forum.modal.error.get_image_data')
+            : app.translator.trans('fof-profile-image-crop.forum.modal.error.generic_resize'),
+      };
+
+      this.loaded();
+
+      this.cropper.destroy();
+      this.cropper = null;
+
+      m.redraw();
+
+      return;
+    }
+
+    return this.submitDataURI(resizedCanvas.toDataURL());
   }
 
   async submitDataURI(dataURI) {
+    console.log('url to blob');
     const blob = await dataURLToBlob(dataURI);
 
     const file = new File([blob], this.attrs.file.name, { type: this.attrs.file.type });
