@@ -5,6 +5,7 @@ import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 
 import { dataURLToBlob } from 'blob-util';
+import { loadCropper, loadImageBlobReduce } from '../external/modules';
 
 export default class ProfileImageCropModal extends Modal {
   static isDismissible = false;
@@ -65,17 +66,8 @@ export default class ProfileImageCropModal extends Modal {
     // otherwise becomes null on Chrome
     const target = evt.target || evt.path[0];
 
-    let Cropper;
+    const Cropper = await loadCropper();
 
-    try {
-      __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
-
-      Cropper = (await import(/* webpackChunkName: 'modules' */ 'cropperjs')).default;
-    } catch (e) {
-      console.error('[fof/profile-image-crop] An error occurred while loading `cropperjs`.', e);
-    }
-
-    // import() won't throw an error after the first time
     if (!Cropper) {
       this.alertAttrs = {
         type: 'error',
@@ -139,7 +131,7 @@ export default class ProfileImageCropModal extends Modal {
     this.loading = true;
 
     if (!this.cropper) {
-      return this.submitBlob(await dataURLToBlob(this.image));
+      return this.submitBlob(dataURLToBlob(this.image));
     }
 
     const canvas = this.cropper.getCroppedCanvas();
@@ -148,22 +140,9 @@ export default class ProfileImageCropModal extends Modal {
       return this.submitBlob(await this.canvasToBlob(canvas));
     }
 
-    let imageBlobReduce;
+    const imageBlobReduce = await loadImageBlobReduce();
 
-    try {
-      __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
-
-      imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ 'image-blob-reduce')).default;
-    } catch (e) {
-      console.error('[fof/profile-image-crop] An error occurred while loading `image-blob-reduce`.', e);
-
-      this.loaded();
-      this.disableResize();
-
-      return this.upload();
-    }
-
-    // The error won't be thrown again if import() is called again (eg. another upload)
+    // If image-blob-reduce is not available, we can't resize the image
     if (!imageBlobReduce) {
       this.loaded();
       this.disableResize();
