@@ -61,8 +61,6 @@ export default class ProfileImageCropModal extends Modal {
   }
 
   async loadPicker(evt) {
-    __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
-
     // Need to store event target before async and/or timeouts,
     // otherwise becomes null on Chrome
     const target = evt.target || evt.path[0];
@@ -70,10 +68,15 @@ export default class ProfileImageCropModal extends Modal {
     let Cropper;
 
     try {
+      __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
+
       Cropper = (await import(/* webpackChunkName: 'modules' */ 'cropperjs')).default;
     } catch (e) {
-      console.error('[fof/profile-image-crop] An error occurred while loading cropperjs.', e);
+      console.error('[fof/profile-image-crop] An error occurred while loading `cropperjs`.', e);
+    }
 
+    // import() won't throw an error after the first time
+    if (!Cropper) {
       this.alertAttrs = {
         type: 'error',
         content: app.translator.trans('fof-profile-image-crop.forum.modal.error.failed_to_load_cropper'),
@@ -148,11 +151,22 @@ export default class ProfileImageCropModal extends Modal {
     let imageBlobReduce;
 
     try {
+      __webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`;
+
       imageBlobReduce = (await import(/* webpackChunkName: 'modules' */ 'image-blob-reduce')).default;
     } catch (e) {
-      console.error('[fof/profile-image-crop] An error occurred while loading image-blob-reduce.', e);
+      console.error('[fof/profile-image-crop] An error occurred while loading `image-blob-reduce`.', e);
 
-      this.noResize = true;
+      this.loaded();
+      this.disableResize();
+
+      return this.upload();
+    }
+
+    // The error won't be thrown again if import() is called again (eg. another upload)
+    if (!imageBlobReduce) {
+      this.loaded();
+      this.disableResize();
 
       return this.upload();
     }
@@ -160,13 +174,13 @@ export default class ProfileImageCropModal extends Modal {
     let resizedCanvas = canvas;
 
     try {
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+      const blob = await this.canvasToBlob(canvas);
 
       resizedCanvas = await imageBlobReduce().toCanvas(blob, {
         max: 100,
       });
     } catch (e) {
-      console.error('[fof/profile-image-crop] An error occurred while resizing the image', e);
+      console.error('[fof/profile-image-crop] An error occurred while resizing the image.', e);
 
       this.alertAttrs = {
         type: 'error',
@@ -177,11 +191,7 @@ export default class ProfileImageCropModal extends Modal {
       };
 
       this.loaded();
-
-      this.cropper.destroy();
-      this.cropper = null;
-
-      m.redraw();
+      this.disableCrop();
 
       return;
     }

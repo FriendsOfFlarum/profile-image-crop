@@ -3,7 +3,7 @@ fof-profile-image-crop:
     modal:
       error:
         failed_to_load_cropper: Failed to load the image cropper.
-        generic: Something went wrong while cropping the image.
+        generic_resize: Something went wrong while cropping & resizing the image.
         get_image_data: Failed to crop. Make sure your browser's fingerprinting protection is disabled.
 
       help_text: >
