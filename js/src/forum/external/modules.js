@@ -1,6 +1,6 @@
 import app from 'flarum/forum/app';
 
-const prepare = () => (__webpack_public_path__ = `${app.forum.attribute('baseUrl')}/assets/extensions/fof-profile-image-crop/`);
+const prepare = () => (__webpack_public_path__ = `${app.forum.attribute('assetsBaseUrl')}/extensions/fof-profile-image-crop/`);
 
 export const loadCropper = async () => {
   try {
