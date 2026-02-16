@@ -14,7 +14,6 @@ export default class ProfileImageCropModal extends Modal {
   image!: string | ArrayBuffer | null;
   ready = false;
   loading = false;
-  noResize = false;
   cropper: InstanceType<typeof Cropper> | null = null;
 
   className() {
@@ -51,8 +50,7 @@ export default class ProfileImageCropModal extends Modal {
         {this.ready && this.cropper && (
           <p className="helpText">
             {app.translator.trans('fof-profile-image-crop.forum.modal.help_text', {
-              disableResize: this.noResize ? <s /> : <a onclick={this.disableResize.bind(this)} />,
-              disableCrop: !this.cropper ? <s /> : <a onclick={this.disableCrop.bind(this)} />,
+              disableCrop: <a onclick={this.disableCrop.bind(this)} />,
             })}
           </p>
         )}
@@ -122,11 +120,6 @@ export default class ProfileImageCropModal extends Modal {
     super.onbeforeupdate(vnode);
   }
 
-  disableResize() {
-    this.noResize = true;
-    m.redraw();
-  }
-
   disableCrop() {
     if (this.cropper) {
       this.cropper.destroy();
@@ -153,18 +146,17 @@ export default class ProfileImageCropModal extends Modal {
       return;
     }
 
-    if (this.noResize) {
-      return this.submitBlob(await this.canvasToBlob(canvas));
-    }
-
     try {
       const resizedCanvas = this.resizeCanvas(canvas, 100);
       return this.submitBlob(await this.canvasToBlob(resizedCanvas));
     } catch (e) {
       console.error('[fof/profile-image-crop] An error occurred while resizing the image.', e);
       this.loaded();
-      this.disableResize();
-      return this.upload();
+      this.alertAttrs = {
+        type: 'error',
+        content: (e as Error)?.message || String(e),
+      } as any;
+      m.redraw();
     }
   }
 
