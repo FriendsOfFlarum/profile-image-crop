@@ -1,9 +1,15 @@
-@import './libs/cropper';
+/* cropperjs v2 uses web components with built-in styles - only custom overrides needed */
 
 .FofProfileImageCropModal {
-  .cropper-view-box,
-  .cropper-face {
+  /* Circular crop for avatar - cropperjs v2 uses cropper-selection */
+  cropper-selection {
     border-radius: 50%;
+  }
+
+  /* cropper-canvas needs explicit dimensions */
+  cropper-canvas {
+    min-height: 200px;
+    height: 320px;
   }
 
   .Modal-buttons {
