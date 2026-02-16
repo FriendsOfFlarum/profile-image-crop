@@ -19,10 +19,7 @@
     }
   ],
   "require": {
-    "flarum/core": "^1.8.0"
-  },
-  "replace": {
-    "wiseclock/flarum-ext-profile-image-crop": "*"
+    "flarum/core": "^2.0.0"
   },
   "authors": [
     {
@@ -45,9 +42,6 @@
         "backgroundColor": "#e74c3c",
         "color": "#fff"
       }
-    },
-    "flagrow": {
-      "discuss": "https://discuss.flarum.org/d/18286"
     }
   },
   "scripts": {
@@ -69,6 +63,9 @@
     "analyse:phpstan": "Run static analysis"
   },
   "require-dev": {
+    "flarum/testing": "*",
     "flarum/phpstan": "*"
-  }
+  },
+  "minimum-stability": "beta",
+  "prefer-stable": true
 }
