@@ -1,0 +1,240 @@
+{
+  "fileCounts": {},
+  "anys": [
+    {
+      "file": "src/forum/external/modules.js",
+      "line": 20,
+      "character": 81,
+      "text": "default",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 20,
+      "character": 9,
+      "text": "vnode",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 63,
+      "character": 19,
+      "text": "evt",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 66,
+      "character": 10,
+      "text": "target",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 66,
+      "character": 19,
+      "text": "evt",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 66,
+      "character": 23,
+      "text": "target",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 66,
+      "character": 33,
+      "text": "evt",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 66,
+      "character": 37,
+      "text": "path",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 94,
+      "character": 17,
+      "text": "vnode",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 95,
+      "character": 10,
+      "text": "err",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 95,
+      "character": 16,
+      "text": "vnode",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 95,
+      "character": 22,
+      "text": "attrs",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 95,
+      "character": 28,
+      "text": "error",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 97,
+      "character": 8,
+      "text": "err",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 100,
+      "character": 11,
+      "text": "err",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 100,
+      "character": 15,
+      "text": "alert",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 103,
+      "character": 10,
+      "text": "content",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 103,
+      "character": 19,
+      "text": "err",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 103,
+      "character": 45,
+      "text": "err",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 109,
+      "character": 13,
+      "text": "vnode",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 109,
+      "character": 19,
+      "text": "attrs",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 109,
+      "character": 25,
+      "text": "error",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 142,
+      "character": 10,
+      "text": "imageBlobReduce",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 145,
+      "character": 9,
+      "text": "imageBlobReduce",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 155,
+      "character": 12,
+      "text": "blob",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 157,
+      "character": 28,
+      "text": "imageBlobReduce",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 157,
+      "character": 46,
+      "text": "toCanvas",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 157,
+      "character": 55,
+      "text": "blob",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 180,
+      "character": 21,
+      "text": "canvas",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 181,
+      "character": 36,
+      "text": "canvas",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 181,
+      "character": 43,
+      "text": "toBlob",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/components/ProfileImageCropModal.js",
+      "line": 184,
+      "character": 19,
+      "text": "blob",
+      "kind": 1
+    },
+    {
+      "file": "src/forum/index.js",
+      "line": 22,
+      "character": 54,
+      "text": "error",
+      "kind": 1
+    }
+  ],
+  "percentage": 90.93406593406593,
+  "total": 364,
+  "covered": 331,
+  "uncovered": 33
+}
