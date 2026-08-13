@@ -2,29 +2,29 @@ import app from 'flarum/forum/app';
 
 import AvatarEditor from 'flarum/forum/components/AvatarEditor';
 
-interface AvatarUploadResponse {
-  data?: {
-    attributes?: {
-      avatarUrl?: string;
-    };
-  };
-}
+import { ANIMATED_TYPES } from '../utils/animatedTypes';
+
+import type User from 'flarum/common/models/User';
 
 /**
- * AvatarEditor that shows a crop modal before uploading.
+ * An `AvatarEditor` that shows a crop modal before handing the resulting file
+ * back to core's upload flow.
  */
 export default class ProfileImageCropAvatarEditor extends AvatarEditor {
   upload(file: File): void {
-    if (!file || !window.FileReader) return super.upload(file);
+    if (!file || !window.FileReader || ANIMATED_TYPES.includes(file.type)) return super.upload(file);
     if (this.loading) return;
-
-    const user = (this.attrs as { user: { id: () => string } }).user;
 
     app.modal.show(() => import('./ProfileImageCropModal'), {
       file,
       upload: (croppedFile: File) => {
+        // Core's `upload()` fires the request but doesn't hand back a promise,
+        // so we mirror its request here to know when the upload settles —
+        // reusing its `success`/`failure` handlers to keep the store in sync.
+        const user = (this.attrs as { user: User }).user;
         const data = new FormData();
         data.append('avatar', croppedFile);
+
         this.loading = true;
         m.redraw();
 
@@ -35,22 +35,15 @@ export default class ProfileImageCropAvatarEditor extends AvatarEditor {
             serialize: (raw: unknown) => raw,
             body: data,
           })
-          .then((response: unknown) => {
-            const res = response as AvatarUploadResponse;
-            const attrs = res?.data?.attributes;
-            if (attrs?.avatarUrl) {
-              attrs.avatarUrl += (attrs.avatarUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-            }
+          .then((response) => {
             this.success(response as object);
             app.modal.close();
           })
-          .catch((error: unknown) => {
-            this.failure(error as object);
-            const modal = app.modal?.modal;
-            if (modal?.attrs?.upload) {
-              (modal.attrs as Record<string, unknown>).error = error;
-              m.redraw();
-            }
+          .catch((error) => {
+            this.failure(error);
+
+            // Rethrow so the modal surfaces the error and stays open.
+            throw error;
           });
       },
     });
